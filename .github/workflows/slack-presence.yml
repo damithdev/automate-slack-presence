@@ -1,24 +1,23 @@
-name: Slack Presence
+name: Slack Presence Scheduler
 
 on:
   schedule:
-    - cron: '30 2 * * *'     # 8:00 AM SL time
-    - cron: '30 11 * * *'    # 5:00 PM SL time
-  workflow_dispatch:
+    - cron: '30 2 * * *'     # 8:00 AM SLT (UTC+5:30)
+    - cron: '30 11 * * *'    # 5:00 PM SLT (UTC+5:30)
+  workflow_dispatch:         # Allows manual trigger
 
 jobs:
   update-presence:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Set Slack Presence
+      - name: Make script executable
+        run: chmod +x slack-presence.sh
+
+      - name: Run presence script
         env:
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-        run: |
-          if [[ "$(date +%H:%M)" == "02:30" ]]; then
-            ./slack-presence.sh auto
-          else
-            ./slack-presence.sh away
-          fi
+        run: ./slack-presence.sh
