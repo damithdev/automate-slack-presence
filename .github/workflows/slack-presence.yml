@@ -1,0 +1,24 @@
+name: Slack Presence
+
+on:
+  schedule:
+    - cron: '30 2 * * *'     # 8:00 AM SL time
+    - cron: '30 11 * * *'    # 5:00 PM SL time
+  workflow_dispatch:
+
+jobs:
+  update-presence:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set Slack Presence
+        env:
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+        run: |
+          if [[ "$(date +%H:%M)" == "02:30" ]]; then
+            ./slack-presence.sh auto
+          else
+            ./slack-presence.sh away
+          fi
